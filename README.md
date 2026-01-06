@@ -14,12 +14,6 @@ A nostalgic Electron application that recreates the 90s dial-up internet experie
 - **Sound Effects**: Click sounds for buttons and error sounds for failed actions
 - **Connection Status**: Track your connection time in the browser toolbar
 
-## Screenshots
-
-| Dial-up Window | Browser Window |
-|----------------|----------------|
-| ![Dialup](screenshots/dialup.png) | ![Browser](screenshots/browser.png) |
-
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
@@ -86,13 +80,6 @@ retro-browser/
 ├── scripts/            # Build scripts
 └── dist/               # Compiled output (generated)
 ```
-
-## How It Works
-
-1. **Launch**: The application starts with a dial-up connection dialog
-2. **Connect**: Click "Connect" to initiate the dial-up sequence with authentic modem sounds
-3. **Browse**: Once connected, a retro Internet Explorer-style browser opens
-4. **Disconnect**: Your connection may randomly drop, or you can manually disconnect from the status indicator
 
 ## Technologies
 
