@@ -6,6 +6,57 @@ import { BrowserWindow } from 'electron';
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
 
 /**
+ * Available modem speed options
+ */
+export type ModemSpeed = '14.4k' | '28.8k' | '33.6k' | '56k';
+
+/**
+ * Modem profile configuration for network throttling
+ */
+export interface ModemProfile {
+  name: string;
+  downloadThroughput: number;  // bytes per second
+  uploadThroughput: number;    // bytes per second
+  latency: number;             // milliseconds
+  displaySpeed: string;        // for UI display (e.g., "14,400 bps")
+}
+
+/**
+ * Network throttling profiles for different modem speeds
+ * Throughput values are in bytes per second
+ */
+export const MODEM_PROFILES: Record<ModemSpeed, ModemProfile> = {
+  '14.4k': {
+    name: '14.4k Modem',
+    downloadThroughput: 1800,    // ~1.8 KB/s
+    uploadThroughput: 900,
+    latency: 500,
+    displaySpeed: '14,400',
+  },
+  '28.8k': {
+    name: '28.8k Modem',
+    downloadThroughput: 3600,    // ~3.6 KB/s
+    uploadThroughput: 1800,
+    latency: 400,
+    displaySpeed: '28,800',
+  },
+  '33.6k': {
+    name: '33.6k Modem',
+    downloadThroughput: 4200,    // ~4.2 KB/s
+    uploadThroughput: 2100,
+    latency: 350,
+    displaySpeed: '33,600',
+  },
+  '56k': {
+    name: '56k Modem',
+    downloadThroughput: 6800,    // ~6.8 KB/s (typical real-world 56k)
+    uploadThroughput: 3400,
+    latency: 300,
+    displaySpeed: '56,000',
+  },
+};
+
+/**
  * Application state interface
  */
 export interface AppState {
@@ -19,6 +70,8 @@ export interface AppState {
   browserWindow: BrowserWindow | null;
   /** Timer ID for random disconnection (null if not active) */
   randomDisconnectTimer: NodeJS.Timeout | null;
+  /** Selected modem speed for network throttling */
+  selectedModemSpeed: ModemSpeed;
 }
 
 /**
@@ -31,6 +84,7 @@ export const state: AppState = {
   dialupWindow: null,
   browserWindow: null,
   randomDisconnectTimer: null,
+  selectedModemSpeed: '56k',
 };
 
 /**

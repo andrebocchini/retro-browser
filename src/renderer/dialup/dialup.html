@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:">
   <title>Connect To...</title>
   <link rel="stylesheet" href="../../../node_modules/98.css/dist/98.css">
   <link rel="stylesheet" href="dialup.css">
@@ -22,6 +22,29 @@
           <p class="phone-number">Phone: 555-1234</p>
         </div>
       </div>
+
+      <!-- Modem selection section -->
+      <fieldset class="modem-fieldset">
+        <legend>Modem</legend>
+        <div class="modem-options">
+          <div class="modem-option">
+            <input type="radio" name="modem-speed" value="14.4k" id="modem-14k">
+            <label for="modem-14k">14.4k Modem</label>
+          </div>
+          <div class="modem-option">
+            <input type="radio" name="modem-speed" value="28.8k" id="modem-28k">
+            <label for="modem-28k">28.8k Modem</label>
+          </div>
+          <div class="modem-option">
+            <input type="radio" name="modem-speed" value="33.6k" id="modem-33k">
+            <label for="modem-33k">33.6k Modem</label>
+          </div>
+          <div class="modem-option">
+            <input type="radio" name="modem-speed" value="56k" id="modem-56k" checked>
+            <label for="modem-56k">56k Modem</label>
+          </div>
+        </div>
+      </fieldset>
 
       <!-- Status section -->
       <fieldset class="status-fieldset">

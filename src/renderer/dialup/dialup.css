@@ -54,6 +54,27 @@ body {
   margin-bottom: 4px !important;
 }
 
+/* Modem selection fieldset */
+.modem-fieldset {
+  margin-bottom: 12px;
+}
+
+.modem-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modem-option {
+  margin-bottom: 4px;
+}
+
+/* Disable modem selection during connection */
+.modem-fieldset.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 /* Status fieldset */
 .status-fieldset {
   margin-bottom: 12px;

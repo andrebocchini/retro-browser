@@ -34,6 +34,14 @@ function playSound(name: SoundName): void {
  */
 type DialogMode = 'connect' | 'status' | 'connection-lost';
 
+// Modem speed display names for status text
+const modemDisplaySpeeds: Record<string, string> = {
+  '14.4k': '14,400',
+  '28.8k': '28,800',
+  '33.6k': '33,600',
+  '56k': '56,000',
+};
+
 // DOM element references
 const statusText = document.getElementById('status-text') as HTMLParagraphElement;
 const progressContainer = document.getElementById('progress-container') as HTMLDivElement;
@@ -43,6 +51,20 @@ const reconnectBtn = document.getElementById('reconnect-btn') as HTMLButtonEleme
 const disconnectBtn = document.getElementById('disconnect-btn') as HTMLButtonElement;
 const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
 const modemAudio = document.getElementById('modem-audio') as HTMLAudioElement;
+const modemFieldset = document.querySelector('.modem-fieldset') as HTMLFieldSetElement;
+const modemRadios = document.querySelectorAll('input[name="modem-speed"]') as NodeListOf<HTMLInputElement>;
+
+/**
+ * Get the currently selected modem speed
+ */
+function getSelectedModemSpeed(): string {
+  for (let i = 0; i < modemRadios.length; i++) {
+    if (modemRadios[i].checked) {
+      return modemRadios[i].value;
+    }
+  }
+  return '56k'; // default
+}
 
 /**
  * Current mode of the dialog
@@ -109,15 +131,21 @@ async function connect(): Promise<void> {
   reconnectBtn.disabled = true;
   cancelBtn.disabled = true;
 
+  // Disable modem selection during connection
+  modemFieldset.classList.add('disabled');
+
   // Hide warning if it was showing
   connectionLostWarning.classList.add('hidden');
 
   // Show progress animation
   progressContainer.classList.remove('hidden');
 
+  // Get the selected modem speed
+  const selectedSpeed = getSelectedModemSpeed();
+
   try {
-    // Notify main process that connection is starting
-    await window.electronAPI.connectStart();
+    // Notify main process that connection is starting with selected speed
+    await window.electronAPI.connectStart(selectedSpeed);
 
     // Start playing modem sound
     modemAudio.currentTime = 0;
@@ -142,9 +170,8 @@ async function connect(): Promise<void> {
     await delay(1500);
 
     // Status: Connected
-    const speeds = ['28,800', '33,600', '56,000'];
-    const randomSpeed = speeds[Math.floor(Math.random() * speeds.length)];
-    statusText.textContent = `Connected at ${randomSpeed} bps.`;
+    const displaySpeed = modemDisplaySpeeds[selectedSpeed] || '56,000';
+    statusText.textContent = `Connected at ${displaySpeed} bps.`;
     await delay(1500);
 
     // Stop audio and notify main process
@@ -157,6 +184,7 @@ async function connect(): Promise<void> {
     console.error('Connection error:', error);
     statusText.textContent = 'Connection failed. Please try again.';
     progressContainer.classList.add('hidden');
+    modemFieldset.classList.remove('disabled');
   } finally {
     isConnecting = false;
     connectBtn.disabled = false;
@@ -189,6 +217,7 @@ function cancel(): void {
     connectBtn.disabled = false;
     reconnectBtn.disabled = false;
     cancelBtn.disabled = false;
+    modemFieldset.classList.remove('disabled');
   } else if (currentMode === 'status') {
     // Just hide the window (close it)
     window.close();

@@ -52,6 +52,9 @@ const connectionStatus = document.getElementById('connection-status') as HTMLBut
 const connectionTimer = document.getElementById('connection-timer') as HTMLSpanElement;
 const statusMessage = document.getElementById('status-message') as HTMLDivElement;
 const webview = document.getElementById('webview') as WebviewElement;
+const downloadProgress = document.getElementById('download-progress') as HTMLDivElement;
+const progressBar = document.getElementById('progress-bar') as HTMLDivElement;
+const bytesDisplay = document.getElementById('bytes-display') as HTMLSpanElement;
 
 /**
  * Default home page URL
@@ -75,6 +78,20 @@ function formatTime(totalSeconds: number): string {
   return [hours, minutes, seconds]
     .map((n) => n.toString().padStart(2, '0'))
     .join(':');
+}
+
+/**
+ * Format bytes to human readable string
+ * @param bytes - Number of bytes
+ */
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  } else if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  } else {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
 }
 
 /**
@@ -200,6 +217,8 @@ webview.addEventListener('did-stop-loading', () => {
   statusMessage.textContent = 'Done';
   connectionStatus.classList.remove('loading');
   updateNavigationButtons();
+  // Hide progress bar when loading completes
+  downloadProgress.classList.add('hidden');
 });
 
 webview.addEventListener('did-navigate', (event: any) => {
@@ -222,6 +241,31 @@ webview.addEventListener('did-fail-load', (event: any) => {
 
 webview.addEventListener('page-title-updated', (event: any) => {
   document.title = event.title ? `${event.title} - Internet Explorer` : 'Internet Explorer';
+});
+
+// Listen for download progress updates from main process
+window.electronAPI.onDownloadProgress((progress) => {
+  if (progress.isLoading) {
+    downloadProgress.classList.remove('hidden');
+
+    if (progress.totalBytes > 0) {
+      // Determinate progress - we know the total size
+      const percentage = (progress.bytesDownloaded / progress.totalBytes) * 100;
+      progressBar.classList.remove('indeterminate');
+      progressBar.style.width = `${Math.min(percentage, 100)}%`;
+      bytesDisplay.textContent = `${formatBytes(progress.bytesDownloaded)} / ${formatBytes(progress.totalBytes)}`;
+    } else {
+      // Indeterminate progress - unknown total size
+      progressBar.classList.add('indeterminate');
+      progressBar.style.width = '';
+      bytesDisplay.textContent = formatBytes(progress.bytesDownloaded);
+    }
+  } else {
+    // Loading complete - hide progress
+    downloadProgress.classList.add('hidden');
+    progressBar.style.width = '0%';
+    progressBar.classList.remove('indeterminate');
+  }
 });
 
 // Initialize

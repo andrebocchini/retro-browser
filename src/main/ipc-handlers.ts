@@ -6,8 +6,10 @@ import {
   getRandomDelay,
   MIN_DISCONNECT_DELAY,
   MAX_DISCONNECT_DELAY,
+  ModemSpeed,
 } from './state';
 import { createBrowserWindow } from './windows';
+import { applyNetworkThrottling } from './network-throttle';
 
 /**
  * Register all IPC handlers
@@ -18,8 +20,9 @@ export function registerIpcHandlers(): void {
    * Handle connection start request
    * Called when user clicks "Connect" button
    */
-  ipcMain.handle('connect-start', async () => {
+  ipcMain.handle('connect-start', async (_event, modemSpeed: ModemSpeed) => {
     state.status = 'connecting';
+    state.selectedModemSpeed = modemSpeed;
     return { success: true };
   });
 
@@ -38,6 +41,11 @@ export function registerIpcHandlers(): void {
 
     // Create and show the browser window
     state.browserWindow = createBrowserWindow();
+
+    // Apply network throttling when webview is attached
+    state.browserWindow.webContents.on('did-attach-webview', (_event, webviewContents) => {
+      applyNetworkThrottling(webviewContents);
+    });
 
     // Handle browser window close
     state.browserWindow.on('closed', () => {

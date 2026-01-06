@@ -182,3 +182,50 @@ webview {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
+
+/* Download progress indicator */
+.progress-field {
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 180px !important;
+  padding: 2px !important;
+}
+
+.progress-track {
+  flex: 1;
+  height: 12px;
+  background: #fff;
+  border: 1px inset #808080;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #000080, #0000ff);
+  transition: width 0.1s linear;
+}
+
+/* Indeterminate progress animation */
+.progress-fill.indeterminate {
+  width: 30%;
+  animation: progress-indeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+.bytes-text {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  min-width: 55px;
+  text-align: right;
+}
+
+/* Hide progress when not loading */
+.progress-field.hidden {
+  display: none !important;
+}
