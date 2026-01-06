@@ -8,7 +8,7 @@ import * as path from 'path';
 export function createDialupWindow(): BrowserWindow {
   const dialupWindow = new BrowserWindow({
     width: 400,
-    height: 300,
+    height: 380,
     resizable: false,
     maximizable: false,
     minimizable: true,
