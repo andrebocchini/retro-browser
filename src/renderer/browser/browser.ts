@@ -1,3 +1,5 @@
+import { playSound } from '../utils/sounds';
+
 // Type assertion for webview element (Electron-specific)
 type WebviewElement = HTMLElement & {
   src: string;
@@ -112,41 +114,49 @@ function navigateToAddress(): void {
   webview.loadURL(url);
 }
 
-// Navigation button event listeners
+// Navigation button event listeners with click sounds
 backBtn.addEventListener('click', () => {
+  playSound('click');
   webview.goBack();
 });
 
 forwardBtn.addEventListener('click', () => {
+  playSound('click');
   webview.goForward();
 });
 
 stopBtn.addEventListener('click', () => {
+  playSound('click');
   webview.stop();
 });
 
 reloadBtn.addEventListener('click', () => {
+  playSound('click');
   webview.reload();
 });
 
 homeBtn.addEventListener('click', () => {
+  playSound('click');
   addressBar.value = HOME_URL;
   webview.loadURL(HOME_URL);
 });
 
 // Address bar event listeners
 goBtn.addEventListener('click', () => {
+  playSound('click');
   navigateToAddress();
 });
 
 addressBar.addEventListener('keydown', (event: KeyboardEvent) => {
   if (event.key === 'Enter') {
+    playSound('click');
     navigateToAddress();
   }
 });
 
 // Connection status button - shows connection dialog
 connectionStatus.addEventListener('click', async () => {
+  playSound('click');
   try {
     await window.electronAPI.showConnectionStatus();
   } catch (error) {
@@ -180,6 +190,7 @@ webview.addEventListener('did-fail-load', (event: any) => {
   if (event.errorCode !== -3) {
     // -3 is aborted, not a real error
     statusMessage.textContent = `Error: ${event.errorDescription}`;
+    playSound('error');
   }
 });
 

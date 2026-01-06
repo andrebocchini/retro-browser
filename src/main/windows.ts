@@ -14,6 +14,7 @@ export function createDialupWindow(): BrowserWindow {
     minimizable: true,
     fullscreenable: false,
     title: 'Connect To...',
+    icon: path.join(__dirname, '..', 'assets', 'dialup-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '..', 'renderer', 'preload.js'),
       contextIsolation: true,
@@ -43,6 +44,7 @@ export function createBrowserWindow(): BrowserWindow {
     minWidth: 640,
     minHeight: 480,
     title: 'Internet Explorer',
+    icon: path.join(__dirname, '..', 'assets', 'browser-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '..', 'renderer', 'preload.js'),
       contextIsolation: true,

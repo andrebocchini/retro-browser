@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.retrobrowser.app",
+  "productName": "Retro Browser",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "node_modules/**/*",
+    "package.json"
+  ],
+  "mac": {
+    "target": ["dmg", "zip"],
+    "icon": "src/assets/browser-icon.png",
+    "category": "public.app-category.utilities"
+  },
+  "win": {
+    "target": ["nsis", "portable"],
+    "icon": "src/assets/browser-icon.png"
+  },
+  "linux": {
+    "target": ["AppImage"],
+    "icon": "src/assets/browser-icon.png",
+    "category": "Network"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  }
+}

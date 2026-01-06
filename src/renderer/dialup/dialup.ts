@@ -1,3 +1,5 @@
+import { playSound } from '../utils/sounds';
+
 /**
  * Dialog mode - determines which buttons are shown
  * 'connect' - Initial state, shows Connect button
@@ -64,6 +66,7 @@ function setDialogMode(mode: DialogMode): void {
     reconnectBtn.classList.remove('hidden');
     cancelBtn.textContent = 'Cancel';
     statusText.textContent = 'Connection lost unexpectedly.';
+    playSound('error');
   }
 }
 
@@ -169,11 +172,23 @@ function cancel(): void {
   }
 }
 
-// Event listeners
-connectBtn.addEventListener('click', connect);
-reconnectBtn.addEventListener('click', connect); // Reconnect uses same connect logic
-disconnectBtn.addEventListener('click', disconnect);
-cancelBtn.addEventListener('click', cancel);
+// Event listeners with click sounds
+connectBtn.addEventListener('click', () => {
+  playSound('click');
+  connect();
+});
+reconnectBtn.addEventListener('click', () => {
+  playSound('click');
+  connect();
+});
+disconnectBtn.addEventListener('click', () => {
+  playSound('click');
+  disconnect();
+});
+cancelBtn.addEventListener('click', () => {
+  playSound('click');
+  cancel();
+});
 
 // Listen for mode changes from main process
 window.electronAPI.onSetMode((mode: 'connect' | 'status' | 'connection-lost') => {
