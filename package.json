@@ -1,0 +1,26 @@
+{
+  "name": "retro-browser",
+  "version": "1.0.0",
+  "description": "A nostalgic dial-up internet experience",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && electron .",
+    "watch": "tsc --watch"
+  },
+  "keywords": [
+    "electron",
+    "retro",
+    "dialup",
+    "browser"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "98.css": "^0.1.21"
+  }
+}
