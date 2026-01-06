@@ -1,0 +1,137 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 8px;
+  background-color: #008080; /* Classic teal background */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main window container */
+.dialup-window {
+  width: 100%;
+  max-width: 380px;
+}
+
+.window-body {
+  padding: 12px;
+}
+
+/* Connection info section */
+.connection-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #808080;
+}
+
+.computer-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.connection-details {
+  flex: 1;
+}
+
+.connection-details p {
+  margin: 0;
+  font-size: 11px;
+}
+
+.isp-name {
+  font-weight: bold;
+  font-size: 12px !important;
+  margin-bottom: 4px !important;
+}
+
+/* Status fieldset */
+.status-fieldset {
+  margin-bottom: 12px;
+}
+
+#status-section {
+  min-height: 40px;
+}
+
+#status-text {
+  margin: 0;
+  font-size: 11px;
+}
+
+/* Progress animation */
+#progress-container {
+  margin-top: 8px;
+  height: 16px;
+  background: #fff;
+  border: 1px inset #808080;
+  overflow: hidden;
+}
+
+#progress-animation {
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(90deg, #000080, #0000ff, #000080);
+  animation: progress-slide 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+/* Button row */
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.button-row button {
+  min-width: 75px;
+}
+
+/* Utility classes */
+.hidden {
+  display: none !important;
+}
+
+/* Connected state styles */
+.connection-timer {
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  margin-top: 8px;
+}
+
+/* Connection lost warning box */
+.warning-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  background: #ffffcc;
+  border: 1px solid #cc9900;
+  color: #663300;
+}
+
+.warning-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.warning-text {
+  font-size: 11px;
+  font-weight: bold;
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Connect To...</title>
+  <link rel="stylesheet" href="../../../node_modules/98.css/dist/98.css">
+  <link rel="stylesheet" href="dialup.css">
+</head>
+<body>
+  <div class="window dialup-window">
+    <div class="title-bar">
+      <div class="title-bar-text">Connect To...</div>
+    </div>
+    <div class="window-body">
+      <!-- Connection icon and info -->
+      <div class="connection-info">
+        <div class="computer-icon">🖥️</div>
+        <div class="connection-details">
+          <p class="isp-name">Dial-Up Networking</p>
+          <p class="phone-number">Phone: 555-1234</p>
+        </div>
+      </div>
+
+      <!-- Status section -->
+      <fieldset class="status-fieldset">
+        <legend>Status</legend>
+        <div id="status-section">
+          <p id="status-text">Ready to connect.</p>
+          <div id="progress-container" class="hidden">
+            <div id="progress-animation"></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Connection lost warning (hidden by default) -->
+      <div id="connection-lost-warning" class="warning-box hidden">
+        <span class="warning-icon">⚠️</span>
+        <span class="warning-text">Connection was lost. Please reconnect.</span>
+      </div>
+
+      <!-- Buttons -->
+      <div class="button-row">
+        <button id="connect-btn" class="default">Connect</button>
+        <button id="reconnect-btn" class="hidden default">Reconnect</button>
+        <button id="disconnect-btn" class="hidden">Disconnect</button>
+        <button id="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio element for modem sound -->
+  <audio id="modem-audio" preload="auto">
+    <source src="../../assets/modem.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="dialup.js"></script>
+</body>
+</html>
