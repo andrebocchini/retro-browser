@@ -30,6 +30,9 @@ export interface ElectronAPI {
   // Event listeners
   onSetMode: (callback: (mode: 'connect' | 'status' | 'connection-lost') => void) => void;
   onDownloadProgress: (callback: (progress: DownloadProgress) => void) => void;
+
+  // Cleanup
+  removeAllListeners: () => void;
 }
 
 /**
@@ -53,5 +56,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   onDownloadProgress: (callback: (progress: DownloadProgress) => void) => {
     ipcRenderer.on('download-progress', (_event, progress) => callback(progress));
+  },
+
+  // Cleanup - remove all IPC event listeners
+  removeAllListeners: () => {
+    ipcRenderer.removeAllListeners('download-progress');
+    ipcRenderer.removeAllListeners('set-mode');
   },
 } as ElectronAPI);

@@ -57,7 +57,7 @@ const modemRadios = document.querySelectorAll('input[name="modem-speed"]') as No
 const randomDisconnectCheckbox = document.getElementById('random-disconnect-checkbox') as HTMLInputElement;
 
 /**
- * Valid modem speed values
+ * Valid modem speed values (must match shared/types.ts)
  */
 type ModemSpeed = '14.4k' | '28.8k' | '33.6k' | '56k';
 

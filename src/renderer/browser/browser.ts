@@ -134,18 +134,36 @@ function updateNavigationButtons(): void {
 }
 
 /**
- * Normalize URL - add https:// if no protocol specified
+ * Normalize and validate URL - add https:// if no protocol specified
  * @param url - URL to normalize
+ * @returns Normalized URL or null if invalid/dangerous
  */
-function normalizeUrl(url: string): string {
+function normalizeUrl(url: string): string | null {
   let normalizedUrl = url.trim();
+
+  // Reject dangerous protocols before normalization
+  const dangerousProtocols = ['javascript:', 'file:', 'data:', 'vbscript:', 'about:'];
+  if (dangerousProtocols.some(proto => normalizedUrl.toLowerCase().startsWith(proto))) {
+    return null;
+  }
 
   // If no protocol, add https://
   if (!normalizedUrl.match(/^https?:\/\//i)) {
     normalizedUrl = 'https://' + normalizedUrl;
   }
 
-  return normalizedUrl;
+  try {
+    const parsed = new URL(normalizedUrl);
+
+    // Only allow http/https protocols
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return null;
+    }
+
+    return normalizedUrl;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -153,8 +171,17 @@ function normalizeUrl(url: string): string {
  */
 function navigateToAddress(): void {
   const url = normalizeUrl(addressBar.value);
+  if (!url) {
+    statusMessage.textContent = 'Invalid URL';
+    playSound('error');
+    return;
+  }
   addressBar.value = url;
-  webview.loadURL(url);
+  webview.loadURL(url).catch((error) => {
+    statusMessage.textContent = 'Failed to load URL';
+    playSound('error');
+    console.error('URL load error:', error);
+  });
 }
 
 // Navigation button event listeners with click sounds
@@ -265,6 +292,14 @@ window.electronAPI.onDownloadProgress((progress) => {
     downloadProgress.classList.add('hidden');
     progressBar.style.width = '0%';
     progressBar.classList.remove('indeterminate');
+  }
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  window.electronAPI.removeAllListeners();
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
   }
 });
 

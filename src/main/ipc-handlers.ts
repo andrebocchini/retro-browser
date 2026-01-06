@@ -6,10 +6,35 @@ import {
   getRandomDelay,
   MIN_DISCONNECT_DELAY,
   MAX_DISCONNECT_DELAY,
+  ModemSpeed,
 } from './state';
 import { ConnectOptions } from '../shared/types';
 import { createBrowserWindow } from './windows';
 import { applyNetworkThrottling } from './network-throttle';
+
+/**
+ * Validate ConnectOptions from IPC
+ */
+function validateConnectOptions(options: unknown): options is ConnectOptions {
+  if (!options || typeof options !== 'object') {
+    return false;
+  }
+
+  const opts = options as Record<string, unknown>;
+
+  // Validate modemSpeed
+  const validSpeeds: ModemSpeed[] = ['14.4k', '28.8k', '33.6k', '56k'];
+  if (typeof opts.modemSpeed !== 'string' || !validSpeeds.includes(opts.modemSpeed as ModemSpeed)) {
+    return false;
+  }
+
+  // Validate randomDisconnectEnabled
+  if (typeof opts.randomDisconnectEnabled !== 'boolean') {
+    return false;
+  }
+
+  return true;
+}
 
 /**
  * Register all IPC handlers
@@ -20,7 +45,17 @@ export function registerIpcHandlers(): void {
    * Handle connection start request
    * Called when user clicks "Connect" button
    */
-  ipcMain.handle('connect-start', async (_event, options: ConnectOptions) => {
+  ipcMain.handle('connect-start', async (_event, options: unknown) => {
+    if (!validateConnectOptions(options)) {
+      console.error('Invalid connect options:', options);
+      return { success: false, error: 'Invalid parameters' };
+    }
+
+    // Guard: Only allow if disconnected
+    if (state.status !== 'disconnected') {
+      return { success: false, error: 'Already connecting or connected' };
+    }
+
     state.status = 'connecting';
     state.selectedModemSpeed = options.modemSpeed;
     state.randomDisconnectEnabled = options.randomDisconnectEnabled;
@@ -32,11 +67,16 @@ export function registerIpcHandlers(): void {
    * Called after modem sound finishes playing
    */
   ipcMain.handle('connect-complete', async () => {
+    // Guard: Only allow if we're in connecting state
+    if (state.status !== 'connecting') {
+      return { success: false, error: 'Not in connecting state' };
+    }
+
     state.status = 'connected';
     state.connectedAt = Date.now();
 
     // Hide the dialup window
-    if (state.dialupWindow) {
+    if (state.dialupWindow && !state.dialupWindow.isDestroyed()) {
       state.dialupWindow.hide();
     }
 
@@ -45,12 +85,19 @@ export function registerIpcHandlers(): void {
 
     // Apply network throttling when webview is attached
     state.browserWindow.webContents.on('did-attach-webview', (_event, webviewContents) => {
-      applyNetworkThrottling(webviewContents);
+      applyNetworkThrottling(webviewContents).catch((error) => {
+        console.error('Failed to apply network throttling:', error);
+      });
     });
 
     // Handle browser window close
     state.browserWindow.on('closed', () => {
       state.browserWindow = null;
+      // Clear the random disconnect timer regardless of state
+      if (state.randomDisconnectTimer) {
+        clearTimeout(state.randomDisconnectTimer);
+        state.randomDisconnectTimer = null;
+      }
       // If user closes browser window directly, disconnect
       if (state.status === 'connected') {
         handleDisconnect();
@@ -70,12 +117,13 @@ export function registerIpcHandlers(): void {
    * Called when user clicks the connection status icon in browser toolbar
    */
   ipcMain.handle('show-connection-status', async () => {
-    if (state.dialupWindow) {
+    if (state.dialupWindow && !state.dialupWindow.isDestroyed()) {
       // Send message to dialup window to switch to status mode
       state.dialupWindow.webContents.send('set-mode', 'status');
       state.dialupWindow.show();
+      return { success: true };
     }
-    return { success: true };
+    return { success: false, error: 'Dialup window not available' };
   });
 
   /**
@@ -94,6 +142,10 @@ export function registerIpcHandlers(): void {
    * Called when user clicks "Disconnect" button
    */
   ipcMain.handle('disconnect', async () => {
+    // Guard: Only allow if connected
+    if (state.status !== 'connected') {
+      return { success: false, error: 'Not connected' };
+    }
     handleDisconnect();
     return { success: true };
   });

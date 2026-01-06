@@ -129,5 +129,5 @@ export function getRandomDelay(minMs: number, maxMs: number): number {
 /**
  * Constants for random disconnect timing
  */
-export const MIN_DISCONNECT_DELAY = 30 * 1000; // 30 seconds
-export const MAX_DISCONNECT_DELAY = 30 * 1000; // 30 seconds
+export const MIN_DISCONNECT_DELAY = 2 * 60 * 1000; // 2 minutes
+export const MAX_DISCONNECT_DELAY = 3 * 60 * 1000; // 3 minutes
