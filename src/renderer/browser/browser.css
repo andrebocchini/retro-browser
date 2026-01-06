@@ -1,0 +1,184 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+  font-size: 11px;
+}
+
+/* Main container */
+.browser-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #c0c0c0;
+}
+
+/* Toolbar */
+.toolbar {
+  background: linear-gradient(180deg, #d4d0c8 0%, #c0c0c0 100%);
+  border-bottom: 1px solid #808080;
+  padding: 2px 4px;
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+  gap: 4px;
+}
+
+/* Navigation buttons */
+.nav-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.nav-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  padding: 2px 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-button:hover:not(:disabled) {
+  background: #e0e0e0;
+  border: 1px outset #fff;
+}
+
+.nav-button:active:not(:disabled) {
+  border: 1px inset #808080;
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.button-label {
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+/* Address bar row */
+.address-row {
+  gap: 6px;
+}
+
+.address-label {
+  font-weight: normal;
+  margin-right: 4px;
+}
+
+.address-wrapper {
+  flex: 1;
+  display: flex;
+}
+
+.address-input {
+  flex: 1;
+  height: 22px;
+  padding: 2px 4px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.go-button {
+  min-width: 40px;
+}
+
+/* Connection status indicator */
+.connection-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #ffffcc;
+  border: 1px solid #808080;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.connection-indicator:hover {
+  background: #ffff99;
+}
+
+.status-icon {
+  font-size: 14px;
+}
+
+.status-timer {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Webview container */
+.webview-container {
+  flex: 1;
+  position: relative;
+  border: 2px inset #808080;
+  margin: 0 2px;
+  background: white;
+}
+
+webview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  padding: 2px 4px;
+  gap: 2px;
+  background: #c0c0c0;
+  border-top: 1px solid #fff;
+}
+
+.status-bar-field {
+  padding: 2px 4px;
+  background: #fff;
+  border: 1px inset #808080;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-bar-field:last-child {
+  flex: 0 0 100px;
+  text-align: center;
+}
+
+/* Loading state */
+.loading .status-icon {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Internet Explorer</title>
+  <link rel="stylesheet" href="../../../node_modules/98.css/dist/98.css">
+  <link rel="stylesheet" href="browser.css">
+</head>
+<body>
+  <div class="browser-container">
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-row navigation-row">
+        <!-- Navigation buttons -->
+        <div class="nav-buttons">
+          <button id="back-btn" class="nav-button" title="Back" disabled>
+            <span class="button-icon">◀</span>
+            <span class="button-label">Back</span>
+          </button>
+          <button id="forward-btn" class="nav-button" title="Forward" disabled>
+            <span class="button-icon">▶</span>
+            <span class="button-label">Forward</span>
+          </button>
+          <button id="stop-btn" class="nav-button" title="Stop">
+            <span class="button-icon">✕</span>
+            <span class="button-label">Stop</span>
+          </button>
+          <button id="reload-btn" class="nav-button" title="Refresh">
+            <span class="button-icon">⟳</span>
+            <span class="button-label">Refresh</span>
+          </button>
+          <button id="home-btn" class="nav-button" title="Home">
+            <span class="button-icon">🏠</span>
+            <span class="button-label">Home</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Address bar row -->
+      <div class="toolbar-row address-row">
+        <label for="address-bar" class="address-label">Address</label>
+        <div class="address-wrapper">
+          <input
+            type="text"
+            id="address-bar"
+            class="address-input"
+            placeholder="http://"
+            value="https://www.google.com"
+          >
+        </div>
+        <button id="go-btn" class="go-button">Go</button>
+
+        <!-- Connection status indicator -->
+        <button id="connection-status" class="connection-indicator" title="Connection Status">
+          <span class="status-icon">🖥️</span>
+          <span id="connection-timer" class="status-timer">00:00:00</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Webview container -->
+    <div class="webview-container">
+      <webview
+        id="webview"
+        src="https://www.google.com"
+        autosize="on"
+      ></webview>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <div id="status-message" class="status-bar-field">Ready</div>
+      <div id="zone-indicator" class="status-bar-field">Internet zone</div>
+    </div>
+  </div>
+
+  <script src="browser.js"></script>
+</body>
+</html>
