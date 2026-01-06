@@ -10,7 +10,16 @@ function createWindow(): void {
   // Create the dialup window and store reference in state
   state.dialupWindow = createDialupWindow();
 
-  // Handle dialup window close
+  // Intercept close to hide instead of destroy when connected
+  state.dialupWindow.on('close', (event) => {
+    if (state.status === 'connected' && state.dialupWindow) {
+      // Prevent window destruction, just hide it
+      event.preventDefault();
+      state.dialupWindow.hide();
+    }
+  });
+
+  // Handle dialup window close (when actually destroyed)
   state.dialupWindow.on('closed', () => {
     state.dialupWindow = null;
     // If dialup window is closed and we're not connected, quit the app

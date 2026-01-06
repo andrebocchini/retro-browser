@@ -70,9 +70,21 @@ body {
 }
 
 /* Disable modem selection during connection */
-.modem-fieldset.disabled {
+.modem-fieldset.disabled,
+.options-fieldset.disabled {
   opacity: 0.6;
   pointer-events: none;
+}
+
+/* Options fieldset */
+.options-fieldset {
+  margin-bottom: 12px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* Status fieldset */

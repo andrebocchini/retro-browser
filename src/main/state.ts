@@ -1,14 +1,13 @@
 import { BrowserWindow } from 'electron';
+import { ModemSpeed } from '../shared/types';
+
+// Re-export for convenience
+export { ModemSpeed } from '../shared/types';
 
 /**
  * Possible states of the dial-up connection
  */
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
-
-/**
- * Available modem speed options
- */
-export type ModemSpeed = '14.4k' | '28.8k' | '33.6k' | '56k';
 
 /**
  * Modem profile configuration for network throttling
@@ -72,6 +71,8 @@ export interface AppState {
   randomDisconnectTimer: NodeJS.Timeout | null;
   /** Selected modem speed for network throttling */
   selectedModemSpeed: ModemSpeed;
+  /** Whether random disconnects are enabled */
+  randomDisconnectEnabled: boolean;
 }
 
 /**
@@ -85,6 +86,7 @@ export const state: AppState = {
   browserWindow: null,
   randomDisconnectTimer: null,
   selectedModemSpeed: '56k',
+  randomDisconnectEnabled: true,
 };
 
 /**
@@ -99,7 +101,8 @@ export function resetState(): void {
     clearTimeout(state.randomDisconnectTimer);
     state.randomDisconnectTimer = null;
   }
-  // Note: We don't reset window references here as they're managed separately
+  // Note: We don't reset window references or user preferences (selectedModemSpeed,
+  // randomDisconnectEnabled) here as they should persist across connections
 }
 
 /**

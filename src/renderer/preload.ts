@@ -1,4 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import { ConnectOptions } from '../shared/types';
+
+// Re-export for convenience
+export { ConnectOptions } from '../shared/types';
 
 /**
  * Download progress information
@@ -14,10 +18,11 @@ export interface DownloadProgress {
  */
 export interface ElectronAPI {
   // Connection actions
-  connectStart: (modemSpeed: string) => Promise<{ success: boolean }>;
+  connectStart: (options: ConnectOptions) => Promise<{ success: boolean }>;
   connectComplete: () => Promise<{ success: boolean }>;
   disconnect: () => Promise<{ success: boolean }>;
   showConnectionStatus: () => Promise<{ success: boolean }>;
+  hideDialupWindow: () => Promise<{ success: boolean }>;
 
   // Connection info
   getConnectionTime: () => Promise<number>;
@@ -33,10 +38,11 @@ export interface ElectronAPI {
  */
 contextBridge.exposeInMainWorld('electronAPI', {
   // Connection actions
-  connectStart: (modemSpeed: string) => ipcRenderer.invoke('connect-start', modemSpeed),
+  connectStart: (options: ConnectOptions) => ipcRenderer.invoke('connect-start', options),
   connectComplete: () => ipcRenderer.invoke('connect-complete'),
   disconnect: () => ipcRenderer.invoke('disconnect'),
   showConnectionStatus: () => ipcRenderer.invoke('show-connection-status'),
+  hideDialupWindow: () => ipcRenderer.invoke('hide-dialup-window'),
 
   // Connection info
   getConnectionTime: () => ipcRenderer.invoke('get-connection-time'),

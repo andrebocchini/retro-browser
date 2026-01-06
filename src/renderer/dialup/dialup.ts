@@ -52,15 +52,22 @@ const disconnectBtn = document.getElementById('disconnect-btn') as HTMLButtonEle
 const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
 const modemAudio = document.getElementById('modem-audio') as HTMLAudioElement;
 const modemFieldset = document.querySelector('.modem-fieldset') as HTMLFieldSetElement;
+const optionsFieldset = document.querySelector('.options-fieldset') as HTMLFieldSetElement;
 const modemRadios = document.querySelectorAll('input[name="modem-speed"]') as NodeListOf<HTMLInputElement>;
+const randomDisconnectCheckbox = document.getElementById('random-disconnect-checkbox') as HTMLInputElement;
+
+/**
+ * Valid modem speed values
+ */
+type ModemSpeed = '14.4k' | '28.8k' | '33.6k' | '56k';
 
 /**
  * Get the currently selected modem speed
  */
-function getSelectedModemSpeed(): string {
+function getSelectedModemSpeed(): ModemSpeed {
   for (let i = 0; i < modemRadios.length; i++) {
     if (modemRadios[i].checked) {
-      return modemRadios[i].value;
+      return modemRadios[i].value as ModemSpeed;
     }
   }
   return '56k'; // default
@@ -75,6 +82,12 @@ let currentMode: DialogMode = 'connect';
  * Whether a connection attempt is in progress
  */
 let isConnecting = false;
+
+/**
+ * Stored preference for random disconnect setting
+ * Preserves user's choice across mode changes
+ */
+let lastRandomDisconnectEnabled: boolean = true;
 
 /**
  * Helper function to create a delay
@@ -103,6 +116,11 @@ function setDialogMode(mode: DialogMode): void {
     connectBtn.classList.remove('hidden');
     cancelBtn.textContent = 'Cancel';
     statusText.textContent = 'Ready to connect.';
+    // Restore checkbox to last used preference
+    randomDisconnectCheckbox.checked = lastRandomDisconnectEnabled;
+    // Re-enable modem and options selection
+    modemFieldset.classList.remove('disabled');
+    optionsFieldset.classList.remove('disabled');
   } else if (mode === 'status') {
     // Connected state - show Disconnect button
     disconnectBtn.classList.remove('hidden');
@@ -114,6 +132,11 @@ function setDialogMode(mode: DialogMode): void {
     reconnectBtn.classList.remove('hidden');
     cancelBtn.textContent = 'Cancel';
     statusText.textContent = 'Connection lost unexpectedly.';
+    // Restore checkbox to last used preference
+    randomDisconnectCheckbox.checked = lastRandomDisconnectEnabled;
+    // Re-enable modem and options selection
+    modemFieldset.classList.remove('disabled');
+    optionsFieldset.classList.remove('disabled');
     playSound('error');
   }
 }
@@ -131,8 +154,9 @@ async function connect(): Promise<void> {
   reconnectBtn.disabled = true;
   cancelBtn.disabled = true;
 
-  // Disable modem selection during connection
+  // Disable modem selection and options during connection
   modemFieldset.classList.add('disabled');
+  optionsFieldset.classList.add('disabled');
 
   // Hide warning if it was showing
   connectionLostWarning.classList.add('hidden');
@@ -140,12 +164,19 @@ async function connect(): Promise<void> {
   // Show progress animation
   progressContainer.classList.remove('hidden');
 
-  // Get the selected modem speed
+  // Get the selected modem speed and random disconnect setting
   const selectedSpeed = getSelectedModemSpeed();
+  const randomDisconnectEnabled = randomDisconnectCheckbox.checked;
+
+  // Store the preference for restoration after mode changes
+  lastRandomDisconnectEnabled = randomDisconnectEnabled;
 
   try {
-    // Notify main process that connection is starting with selected speed
-    await window.electronAPI.connectStart(selectedSpeed);
+    // Notify main process that connection is starting with options
+    await window.electronAPI.connectStart({
+      modemSpeed: selectedSpeed,
+      randomDisconnectEnabled,
+    });
 
     // Start playing modem sound
     modemAudio.currentTime = 0;
@@ -185,6 +216,7 @@ async function connect(): Promise<void> {
     statusText.textContent = 'Connection failed. Please try again.';
     progressContainer.classList.add('hidden');
     modemFieldset.classList.remove('disabled');
+    optionsFieldset.classList.remove('disabled');
   } finally {
     isConnecting = false;
     connectBtn.disabled = false;
@@ -218,9 +250,10 @@ function cancel(): void {
     reconnectBtn.disabled = false;
     cancelBtn.disabled = false;
     modemFieldset.classList.remove('disabled');
+    optionsFieldset.classList.remove('disabled');
   } else if (currentMode === 'status') {
-    // Just hide the window (close it)
-    window.close();
+    // Hide the window (don't close/destroy it)
+    window.electronAPI.hideDialupWindow();
   } else {
     // Close the app
     window.close();

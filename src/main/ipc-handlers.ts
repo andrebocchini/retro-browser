@@ -6,8 +6,8 @@ import {
   getRandomDelay,
   MIN_DISCONNECT_DELAY,
   MAX_DISCONNECT_DELAY,
-  ModemSpeed,
 } from './state';
+import { ConnectOptions } from '../shared/types';
 import { createBrowserWindow } from './windows';
 import { applyNetworkThrottling } from './network-throttle';
 
@@ -20,9 +20,10 @@ export function registerIpcHandlers(): void {
    * Handle connection start request
    * Called when user clicks "Connect" button
    */
-  ipcMain.handle('connect-start', async (_event, modemSpeed: ModemSpeed) => {
+  ipcMain.handle('connect-start', async (_event, options: ConnectOptions) => {
     state.status = 'connecting';
-    state.selectedModemSpeed = modemSpeed;
+    state.selectedModemSpeed = options.modemSpeed;
+    state.randomDisconnectEnabled = options.randomDisconnectEnabled;
     return { success: true };
   });
 
@@ -56,8 +57,10 @@ export function registerIpcHandlers(): void {
       }
     });
 
-    // Start the random disconnect timer
-    scheduleRandomDisconnect();
+    // Start the random disconnect timer if enabled
+    if (state.randomDisconnectEnabled) {
+      scheduleRandomDisconnect();
+    }
 
     return { success: true };
   });
@@ -71,6 +74,17 @@ export function registerIpcHandlers(): void {
       // Send message to dialup window to switch to status mode
       state.dialupWindow.webContents.send('set-mode', 'status');
       state.dialupWindow.show();
+    }
+    return { success: true };
+  });
+
+  /**
+   * Handle request to hide the dialup window
+   * Called when user clicks "Close" button while connected
+   */
+  ipcMain.handle('hide-dialup-window', async () => {
+    if (state.dialupWindow && !state.dialupWindow.isDestroyed()) {
+      state.dialupWindow.hide();
     }
     return { success: true };
   });
